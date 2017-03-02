@@ -17,3 +17,10 @@ export const getPosibleMoves = (game, row, column) => {
 
   return moves;
 }
+
+export const debugBorder = (color) => {
+  return {
+    borderColor: color,
+    borderWidth: 1,
+  }
+}

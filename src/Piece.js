@@ -1,12 +1,13 @@
+
 import React, { Component } from 'react';
 import {
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   Dimensions,
   View,
   Image
 } from 'react-native';
 import PieceHelper from './PieceHelper';
-import { getPosibleMoves } from './Helper';
+import { getPosibleMoves, debugBorder } from './Helper';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,6 +31,7 @@ class Piece extends Component {
     this.props.onPieceSelect(this.props.row, this.props.column, this.props.color, hasMoves);
   }
 
+
   render() {
     const containerStyle = {
       top: this.props.row * (width / 8),
@@ -42,12 +44,12 @@ class Piece extends Component {
     if (this.props.selectable) {
       return (
         <View style={[styles.container, containerStyle]} ref='this'>
-          <TouchableWithoutFeedback onPress={this.onPress.bind(this)}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={this.onPress.bind(this)}>
             <Image
               style={[styles.pieceStyle, textStyle, this.getPieceTranfrom()]}
               source={PieceHelper(this.props.piece)}
             />
-          </TouchableWithoutFeedback>
+        </TouchableOpacity>
         </View>
       );
     }

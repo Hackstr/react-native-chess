@@ -66,8 +66,9 @@ export default class Example extends Component {
             moveCallback = { this.moveCallback }
             captureCallback = { this.captureCallback.bind(this) }
             twoPlayer = { false }
+            playerColor = { Constants.BLACK }
+            isRotate = { true }
             game={this.game}
-            gameID={this.props.gameID}
           />
         </View>
         <View style = {styles.boardContainer}>

@@ -134,7 +134,7 @@ class Board extends Component {
     const pieces = [];
     let moves = [];
 
-    const currentColor = (this.props.twoPlayer) ? CONSTANTS.WHITE : this.props.turn;
+    const currentColor = (this.props.twoPlayer) ? this.props.playerColor : this.props.turn;
 
     const gameState = this.props.game.fen().split(' ')[0].split('/');
 
@@ -197,7 +197,7 @@ class Board extends Component {
                          }
               onPieceSelect={this.onPieceSelected.bind(this)}
               key = { rowIndex + ' ' + i + 'piece'}
-              rotate={this.state.rotate}
+              isRotate = { this.props.isRotate }
             />
           );
           column++;
