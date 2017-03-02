@@ -55,7 +55,7 @@ export default class Example extends Component {
   render() {
     return (
       <View style={[styles.container, this.debugBorder('red')]}>
-        <View style = {[styles.boardContainer]}>
+        <View style = {[styles.boardContainer, this.debugBorder('green')]}>
           <Text> { this.renderCapture('#FFFFFF')} </Text>
         </View>
         <View>
@@ -71,7 +71,7 @@ export default class Example extends Component {
             game={this.game}
           />
         </View>
-        <View style = {styles.boardContainer}>
+        <View style = {[styles.boardContainer, this.debugBorder('green')]}>
           <Text> { this.renderCapture('#000000')} </Text>
         </View>
       </View>
