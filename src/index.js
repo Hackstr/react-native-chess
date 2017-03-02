@@ -1,8 +1,8 @@
-import Board from './Board/Board';
-import Constants from './Board/Constants';
-import Piece from './Board/Piece';
-import PieceHelper from './Board/PieceHelper';
-import Square from './Board/Square';
+import Board from './Board';
+import Constants from './Constants';
+import Piece from './Piece';
+import PieceHelper from './PieceHelper';
+import Square from './Square';
 
 export {
   Board,
