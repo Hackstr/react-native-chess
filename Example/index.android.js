@@ -30,8 +30,8 @@ export default class Example extends Component {
     this.setState({ turn: this.game.turn() === 'b' ? Constants.BLACK : Constants.WHITE })
   }
 
-  moveCallback() {
-
+  moveCallback(row, column, lastMove) {
+    console.log(lastMove);
   }
 
   captureCallback(capturedPiece) {
@@ -67,7 +67,7 @@ export default class Example extends Component {
             captureCallback = { this.captureCallback.bind(this) }
             twoPlayer = { false }
             playerColor = { Constants.BLACK }
-            isRotate = { true }
+            isRotate = { false }
             game={this.game}
           />
         </View>

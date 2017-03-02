@@ -27,6 +27,13 @@ class Board extends Component {
     super();
     this.state = {
       selectedPiece: null,
+      lastMove: {
+        from: null,
+        to: null,
+        type: null,
+        captured: null,
+        promotion: null,
+      }
     };
   }
 
@@ -100,24 +107,24 @@ class Board extends Component {
     };
 
     const gameMove = this.props.game.move(move);
+    let lastMove = {};
 
     if (gameMove) {
       keys[row][column] = keys[this.state.selectedPiece.row][this.state.selectedPiece.column];
       keys[this.state.selectedPiece.row][this.state.selectedPiece.column] = null;
 
+      lastMove = gameMove;
+
       if(gameMove.captured) {
         const capturedPiece = { type: gameMove.captured, color: reverseColor(this.props.turn) };
+        lastMove.captured = capturedPiece;
         this.props.captureCallback(capturedPiece);
       }
     }
 
     this.props.turnComplete();
 
-    if (this.props.twoPlayer) {
-      this.makeRandomMove();
-    }
-
-    this.props.moveCallback(row, column);
+    this.props.moveCallback(row, column, lastMove);
   }
 
   getPieceTranfrom() {
