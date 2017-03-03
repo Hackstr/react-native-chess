@@ -9,12 +9,12 @@ import {
 
 const PieceHelper = (char) => {
   switch (char) {
-    case 'p': return PAWN;
-    case 'b': return BISHOP;
-    case 'r': return ROOK;
-    case 'q': return QUEEN;
-    case 'n': return KNIGHT;
-    case 'k': return KING;
+    case 'p': return '♟';
+    case 'b': return '♝';
+    case 'r': return '♜';
+    case 'q': return '♛';
+    case 'n': return '♞';
+    case 'k': return '♚';
     default: break;
   }
 };

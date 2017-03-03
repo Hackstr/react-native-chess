@@ -2,8 +2,10 @@
 import React, { Component } from 'react';
 import {
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Dimensions,
   View,
+  Text,
   Image
 } from 'react-native';
 import PieceHelper from './PieceHelper';
@@ -38,27 +40,27 @@ class Piece extends Component {
       left: this.props.column * (width / 8)
     };
     const textStyle = {
-      tintColor: this.props.color,
+      color: this.props.color,
     };
 
     if (this.props.selectable) {
       return (
-        <View style={[styles.container, containerStyle]} ref='this'>
-        <TouchableOpacity style={{ flex: 1 }} onPress={this.onPress.bind(this)}>
-            <Image
-              style={[styles.pieceStyle, textStyle, this.getPieceTranfrom()]}
-              source={PieceHelper(this.props.piece)}
-            />
+        <TouchableOpacity style={[{ flex: 1 }, styles.container, containerStyle]} onPress={this.onPress.bind(this)}>
+            <Text
+              style={[styles.text, textStyle, this.getPieceTranfrom()]}
+            >
+              {PieceHelper(this.props.piece)}
+            </Text>
         </TouchableOpacity>
-        </View>
       );
     }
       return (
         <View style={[styles.container, containerStyle]} ref='this'>
-            <Image
-              style={[styles.pieceStyle, textStyle, this.getPieceTranfrom()]}
-              source={PieceHelper(this.props.piece)}
-            />
+            <Text
+              style={[styles.text, textStyle, this.getPieceTranfrom()]}
+            >
+              {PieceHelper(this.props.piece)}
+            </Text>
         </View>
       );
   }
@@ -76,7 +78,6 @@ const styles = {
       fontSize: height / 16.8,
       textAlign: 'center',
       alignSelf: 'center',
-      fontWeight: 'bold'
     },
     pieceStyle: {
       height: height / 16.8,

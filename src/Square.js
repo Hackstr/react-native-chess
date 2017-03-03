@@ -5,13 +5,13 @@ const { width, height } = Dimensions.get('window');
 
 class Square extends Component {
 
-  borderDraw() {
-    const color = this.props.isPiece ? 'red' : 'yellow';
-    return {
-      borderColor: color,
-      borderWidth: 3,
-    };
-  }
+  // borderDraw() {
+  //   const color = this.props.isPiece ? 'red' : 'yellow';
+  //   return {
+  //     borderColor: color,
+  //     borderWidth: 3,
+  //   };
+  // }
 
   squareDraw() {
     const { row, column, hasMoves, selectedPiece } = this.props;
@@ -19,16 +19,37 @@ class Square extends Component {
     const selectedHasMoves = selected && selectedPiece.hasMoves;
 
     const color = column % 2 === 1 ?
-      (row % 2 === 1 ? '#f0d9b5' : '#b58863') :
-      (row % 2 === 1 ? '#b58863' : '#f0d9b5');
+      (row % 2 === 1 ? '#A3A3A3' : '#888888') :
+      (row % 2 === 1 ? '#888888' : '#A3A3A3');
 
     return {
-      backgroundColor: selected ? selectedHasMoves ? '#376060' : 'red' : color,
+      backgroundColor: color,
       width: width / 8,
       height: width / 8
     };
   }
 
+  borderDraw() {
+    const { row, column, hasMoves, selectedPiece } = this.props;
+    const selected = selectedPiece != null && selectedPiece.row === row && selectedPiece.column === column;
+    const selectedHasMoves = selected && selectedPiece.hasMoves;
+
+    if (selected) {
+      return {
+        borderColor: selectedHasMoves ? 'green' : 'red',
+        borderWidth: 2,
+      };
+    }
+
+    if(this.props.selectable && this.props.isPiece) {
+      return {
+        borderColor: 'red',
+        borderWidth: 2,
+      }
+    }
+
+    return {};
+  }
 
   onPressEmptySquare() {
     const { onPressEmptySquare, row, column } = this.props;
@@ -48,7 +69,7 @@ class Square extends Component {
       return (
         <TouchableHighlight style={[this.squareDraw(), this.borderDraw()]} onPress={this.onPressSelectable.bind(this)}>
           <Image
-            style = {{ width: width / 16.8, height: height / 16.8, alignSelf: 'center' }}
+            style = {{ width: width / 16.8, height: height / 16.8, alignSelf: 'center', zIndex: 5}}
             source = { require('./pieces/circle.png')}
           />
         </TouchableHighlight>
@@ -59,7 +80,7 @@ class Square extends Component {
         onPress={this.onPressEmptySquare.bind(this)}
       >
           <View
-            style={this.squareDraw()}
+            style={[this.squareDraw(), this.borderDraw()]}
           />
       </TouchableWithoutFeedback>
     );
