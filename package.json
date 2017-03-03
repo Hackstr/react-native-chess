@@ -1,6 +1,6 @@
 {
   "name": "react-native-chess",
-  "version": "0.1.61",
+  "version": "0.1.7",
   "repository": "https://github.com/Hackstr/react-native-chess",
   "description": "implementation of chess.js on react native",
   "main": "src/index.js",
