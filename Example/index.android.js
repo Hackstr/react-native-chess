@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import { TouchableWithoutFeedback } from 'react-native';
 import { Board, Constants } from 'react-native-chess';
 import { Chess } from 'chess.js';
 
@@ -23,6 +24,7 @@ export default class Example extends Component {
     this.state = {
       turn: Constants.WHITE,
       capturedPieces: [],
+      undo: null
     };
   }
 
@@ -40,6 +42,10 @@ export default class Example extends Component {
     this.setState({ capturedPieces });
   }
 
+  undo() {
+    this.setState({ undo: this.game.undo()});
+  }
+
   renderCapture(captureColor) {
     return this.state.capturedPieces.filter( item => item.color === captureColor ).map((filteredItem, index) => {
       return (
@@ -52,10 +58,12 @@ export default class Example extends Component {
     });
   }
 
+
+
   render() {
     return (
-      <View style={[styles.container, this.debugBorder('red')]}>
-        <View style = {[styles.boardContainer, this.debugBorder('green')]}>
+      <View style={[styles.container]}>
+        <View style = {[styles.boardContainer]}>
           <Text> { this.renderCapture('#FFFFFF')} </Text>
         </View>
         <View>
@@ -66,23 +74,16 @@ export default class Example extends Component {
             moveCallback = { this.moveCallback }
             captureCallback = { this.captureCallback.bind(this) }
             twoPlayer = { false }
-            playerColor = { Constants.BLACK }
+            playerColor = { Constants.WHITE }
             isRotate = { false }
             game={this.game}
           />
         </View>
-        <View style = {[styles.boardContainer, this.debugBorder('green')]}>
+        <View style = {[styles.boardContainer]}>
           <Text> { this.renderCapture('#000000')} </Text>
         </View>
       </View>
     );
-  }
-
-  debugBorder(color) {
-    return {
-      borderColor: color,
-      borderWidth: 2,
-    }
   }
 }
 
