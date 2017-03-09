@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
-import { Board, Constants } from 'react-native-chess';
+import { Board, Constants, helper } from './testBorder/index';
 import { Chess } from 'chess.js';
 
 import {
@@ -33,7 +33,6 @@ export default class Example extends Component {
   }
 
   moveCallback(row, column, lastMove) {
-    console.log(lastMove);
   }
 
   captureCallback(capturedPiece) {

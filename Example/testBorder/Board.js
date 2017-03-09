@@ -8,7 +8,7 @@ import Victor from 'victor';
 import Square from './Square';
 import Piece from './Piece';
 import CONSTANTS from './Constants';
-import { reverseColor, getPosibleMoves, debugBorder, stringToPos } from './Helper';
+import { reverseColor, getPosibleMoves, debugBorder, stringToPos, posToString } from './Helper';
 
 import Svg,{
     Line,
@@ -17,16 +17,16 @@ import Svg,{
 
 const { width } = Dimensions.get('window');
 
-const keys = [
-            [0, 1, 2, 3, 4, 5, 6, 7],
-            [8, 9, 10, 11, 12, 13, 14, 15],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [null, null, null, null, null, null, null, null],
-            [16, 17, 18, 19, 20, 21, 22, 23],
-            [24, 25, 26, 27, 28, 29, 30, 31]
-          ];
+// const keys = [
+//             [0, 1, 2, 3, 4, 5, 6, 7],
+//             [8, 9, 10, 11, 12, 13, 14, 15],
+//             [null, null, null, null, null, null, null, null],
+//             [null, null, null, null, null, null, null, null],
+//             [null, null, null, null, null, null, null, null],
+//             [null, null, null, null, null, null, null, null],
+//             [16, 17, 18, 19, 20, 21, 22, 23],
+//             [24, 25, 26, 27, 28, 29, 30, 31]
+//           ];
 
 class Board extends Component {
 
@@ -71,7 +71,7 @@ class Board extends Component {
   }
 
   getPiece(row, column) {
-    const t = CONSTANTS.COLUMNS[column] + CONSTANTS.ROWS[row];
+    const t = posToString(row, column);
     return this.props.game.get(t);
   }
 
@@ -111,7 +111,6 @@ class Board extends Component {
     const rotateAngle = testVector.horizontalAngleDeg();
 
     const vectr = {x: tempTo.x - tempFrom.x, y: tempTo.y - tempFrom.y };
-    console.log(tempFrom, tempTo, vectr);
 
     this.setState({ arrow: { isVisible, from: tempFrom, to: tempTo, rotateAngle }})
   }
@@ -129,6 +128,9 @@ class Board extends Component {
     };
 
     if (isVisible) {
+      const polygonPoints = `${to.x},${to.y - 10} ${to.x - 10},${to.y} ${to.x},${to.y + 10}`;
+      const origin = `${to.x}, ${to.y}`;
+      
       return (
         <View
         pointerEvents="none" style={rectStyle}>
@@ -142,15 +144,14 @@ class Board extends Component {
               x2={ to.x }
               y2={ to.y }
               stroke="green"
-              strokeWidth="4"
+              strokeWidth="3"
             />
             <Polygon
-              points={ (() => { return `${to.x},${to.y - 10} ${to.x - 10},${to.y} ${to.x},${to.y + 10}` })() }
+              points={ polygonPoints }
               fill="green"
-              stroke="purple"
               strokeWidth="1"
               rotate={ rotateAngle }
-              origin={ (() => { return `${to.x}, ${to.y}` })() }
+              origin={ origin }
             />
           </Svg>
         </View>
@@ -158,17 +159,9 @@ class Board extends Component {
     }
   }
 
-
-  // <Polygon
-  //   points="250,235 240,247 250,260"
-  //   fill="green"
-  //   strokeWidth="1"
-  // />
-
   makeRandomMove() {
     const possibleMoves = this.props.game.moves();
 
-    // game over
     if (possibleMoves.length === 0) return;
 
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
@@ -177,34 +170,37 @@ class Board extends Component {
   }
 
   movePiece(row, column) {
+
+    const { selectedPiece } = this.state;
+    const { game, turn, captureCallback, moveCallback, turnComplete } = this.props;
+
     const move = {
-      from: CONSTANTS.COLUMNS[this.state.selectedPiece.column]
-          + CONSTANTS.ROWS[this.state.selectedPiece.row],
-      to: CONSTANTS.COLUMNS[column] + CONSTANTS.ROWS[row],
+      from: posToString(selectedPiece.row, selectedPiece.column),
+      to: posToString(row, column),
       promotion: 'q',
     };
 
-    const gameMove = this.props.game.move(move);
+    const gameMove = game.move(move);
     let lastMove = {};
 
     if (gameMove) {
-      keys[row][column] = keys[this.state.selectedPiece.row][this.state.selectedPiece.column];
-      keys[this.state.selectedPiece.row][this.state.selectedPiece.column] = null;
+      // keys[row][column] = keys[selectedPiece.row][selectedPiece.column];
+      // keys[selectedPiece.row][selectedPiece.column] = null;
 
       lastMove = gameMove;
 
       if(gameMove.captured) {
-        const capturedPiece = { type: gameMove.captured, color: reverseColor(this.props.turn) };
+        const capturedPiece = { type: gameMove.captured, color: reverseColor(turn) };
         lastMove.captured = capturedPiece;
-        this.props.captureCallback(capturedPiece);
+        captureCallback(capturedPiece);
       }
     }
 
     //Test
     this.setArrowValues(stringToPos(lastMove.from), stringToPos(lastMove.to));
 
-    this.props.moveCallback(row, column, lastMove);
-    this.props.turnComplete();
+    moveCallback(row, column, lastMove);
+    turnComplete();
   }
 
   getPieceTranfrom() {

@@ -45,7 +45,7 @@ class Piece extends Component {
 
     if (this.props.selectable) {
       return (
-        <TouchableOpacity style={[{ flex: 1 }, styles.container, containerStyle]} onPress={this.onPress.bind(this)}>
+        <TouchableOpacity style={[{ flex: 1 }, styles.container, containerStyle]} onPress={this.onPress.bind(this)} ref="this">
             <Text
               style={[styles.text, textStyle, this.getPieceTranfrom()]}
             >
@@ -64,7 +64,19 @@ class Piece extends Component {
         </View>
       );
   }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (this.props.row != nextProps.row || this.props.column != nextProps.column) {
+      console.log(this.props.piece);
+    }
+  }
+
+  componentDidMount() {
+    //console.log('DidMount');
+  }
 }
+
+
 const styles = {
     container: {
       position: 'absolute',

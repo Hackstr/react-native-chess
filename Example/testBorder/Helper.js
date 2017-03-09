@@ -39,3 +39,7 @@ export const stringToPos = (str) => {
     column,
   };
 }
+
+export const posToString = (row, column) => {
+  return Constants.COLUMNS[column] + Constants.ROWS[row];
+}
