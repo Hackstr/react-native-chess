@@ -6,14 +6,19 @@ import {
   Dimensions,
   View,
   Text,
-  Image
+  Image,
+  Animated
 } from 'react-native';
 import PieceHelper from './PieceHelper';
-import { getPosibleMoves, debugBorder } from './Helper';
+import { getPosibleMoves, debugBorder, isEmpty } from './Helper';
 
 const { width, height } = Dimensions.get('window');
 
 class Piece extends Component {
+
+  constructor() {
+    super();
+  }
 
   getPieceTranfrom() {
     const degree = (this.props.isRotate) ? '180deg' : '0deg';
@@ -65,15 +70,19 @@ class Piece extends Component {
       );
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    if (this.props.row != nextProps.row || this.props.column != nextProps.column) {
-      console.log(this.props.piece);
-    }
-  }
-
-  componentDidMount() {
-    //console.log('DidMount');
-  }
+  // moveAnimation() {
+  //   Animated.timing(          // Uses easing functions
+  //      this.state.fadeAnim,    // The value to drive
+  //      {toValue: 1}            // Configuration
+  //    ).start();
+  // }
+  //
+  // componentDidMount() {
+  //   if(!isEmpty(this.props.lastMove)) {
+  //     console.log(this.props.lastMove);
+  //     this.moveAnimation();
+  //   }
+  // }
 }
 
 

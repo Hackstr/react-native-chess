@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Board, Constants, helper } from './testBorder/index';
 import { Chess } from 'chess.js';
+import SFX from './testBorder/Sound';
 
 import {
   AppRegistry,
@@ -33,6 +34,7 @@ export default class Example extends Component {
   }
 
   moveCallback(row, column, lastMove) {
+    SFX.move.play();
   }
 
   captureCallback(capturedPiece) {
@@ -56,8 +58,6 @@ export default class Example extends Component {
       );
     });
   }
-
-
 
   render() {
     return (

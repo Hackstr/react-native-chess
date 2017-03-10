@@ -7,7 +7,9 @@ import {
 import Victor from 'victor';
 import Square from './Square';
 import Piece from './Piece';
+import Arrow from './Arrow';
 import CONSTANTS from './Constants';
+// import Sound from './Sound';
 import { reverseColor, getPosibleMoves, debugBorder, stringToPos, posToString } from './Helper';
 
 import Svg,{
@@ -40,14 +42,9 @@ class Board extends Component {
         isVisible: false,
         rotateAngle: null,
       },
-      lastMove: {
-        from: null,
-        to: null,
-        type: null,
-        captured: null,
-        promotion: null,
-      }
     };
+
+    this.lastMove = {};
   }
 
 
@@ -92,72 +89,22 @@ class Board extends Component {
   }
 
   setArrowValues(from, to) {
-    const cellWidth = width / 8; //widht and height
-    const cellHeight = cellWidth;
-
     const isVisible = true;
-
-    const tempFrom = {
-      x: (from.row * cellWidth) + cellWidth / 2,
-      y: (from.column * cellHeight) + cellHeight / 2,
-    };
-
-    const tempTo = {
-      x: (to.row * cellWidth) + cellWidth / 2,
-      y: (to.column * cellHeight) + cellHeight / 2,
-    };
-
-    const testVector = new Victor(tempFrom.x - tempTo.x, tempFrom.y - tempTo.y);
-    const rotateAngle = testVector.horizontalAngleDeg();
-
-    const vectr = {x: tempTo.x - tempFrom.x, y: tempTo.y - tempFrom.y };
-
-    this.setState({ arrow: { isVisible, from: tempFrom, to: tempTo, rotateAngle }})
+    this.setState({ arrow: { isVisible, from, to}})
   }
 
   drawArrow() {
-    const { isVisible, positionX, positionY, tempHeight, from, to, rotateAngle } = this.state.arrow;
-
-    const rectStyle = {
-        position: 'absolute',
-        zIndex: 1,
-        transform: [
-          {rotateY: "180deg"},
-          {rotate: "90deg"}
-        ],
-    };
-
-    if (isVisible) {
-      const polygonPoints = `${to.x},${to.y - 10} ${to.x - 10},${to.y} ${to.x},${to.y + 10}`;
-      const origin = `${to.x}, ${to.y}`;
-      
+    if(this.state.arrow.isVisible) {
       return (
-        <View
-        pointerEvents="none" style={rectStyle}>
-          <Svg
-              height= { width }
-              width= { width }
-          >
-            <Line
-              x1={ from.x }
-              y1={ from.y }
-              x2={ to.x }
-              y2={ to.y }
-              stroke="green"
-              strokeWidth="3"
-            />
-            <Polygon
-              points={ polygonPoints }
-              fill="green"
-              strokeWidth="1"
-              rotate={ rotateAngle }
-              origin={ origin }
-            />
-          </Svg>
-        </View>
+        <Arrow
+          width = { width }
+          from = { this.state.arrow.from }
+          to = { this.state.arrow.to }
+        />
       );
     }
   }
+
 
   makeRandomMove() {
     const possibleMoves = this.props.game.moves();
@@ -181,25 +128,23 @@ class Board extends Component {
     };
 
     const gameMove = game.move(move);
-    let lastMove = {};
 
     if (gameMove) {
       // keys[row][column] = keys[selectedPiece.row][selectedPiece.column];
       // keys[selectedPiece.row][selectedPiece.column] = null;
 
-      lastMove = gameMove;
+      this.lastMove = gameMove;
 
       if(gameMove.captured) {
         const capturedPiece = { type: gameMove.captured, color: reverseColor(turn) };
-        lastMove.captured = capturedPiece;
+        this.lastMove.captured = capturedPiece;
         captureCallback(capturedPiece);
       }
     }
 
-    //Test
-    this.setArrowValues(stringToPos(lastMove.from), stringToPos(lastMove.to));
+    this.setArrowValues(stringToPos(this.lastMove.from), stringToPos(this.lastMove.to));
 
-    moveCallback(row, column, lastMove);
+    moveCallback(row, column, this.lastMove);
     turnComplete();
   }
 
@@ -275,6 +220,7 @@ class Board extends Component {
               color={color}
               column={column}
               row={rowIndex}
+              lastMove = { this.lastMove }
               game = { this.props.game }
               selectable={currentColor === color ||
                           moves.indexOf(CONSTANTS.COLUMNS[column]

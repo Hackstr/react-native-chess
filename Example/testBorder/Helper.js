@@ -43,3 +43,12 @@ export const stringToPos = (str) => {
 export const posToString = (row, column) => {
   return Constants.COLUMNS[column] + Constants.ROWS[row];
 }
+
+
+export const isEmpty = (obj) => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}

@@ -1,0 +1,15 @@
+/*
+  sounds : volume,
+
+  move - name
+  capture - name
+
+
+  colors : {
+    board coloor
+    arrow coloor
+    piece coloor
+    selected square coloor
+    enemy square color
+  }
+*/
