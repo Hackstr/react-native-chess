@@ -9,8 +9,7 @@ import {
   Image,
   Animated
 } from 'react-native';
-import PieceHelper from './PieceHelper';
-import { getPosibleMoves, debugBorder, isEmpty } from './Helper';
+import { getPosibleMoves, debugBorder, isEmpty, pieceHelper } from './Helper';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,7 +34,7 @@ class Piece extends Component {
       hasMoves = true;
     }
 
-    this.props.onPieceSelect(this.props.row, this.props.column, this.props.color, hasMoves);
+    this.props.onPieceSelect(this.props.row, this.props.column, this.props.color, this.props.piece, hasMoves);
   }
 
 
@@ -54,7 +53,7 @@ class Piece extends Component {
             <Text
               style={[styles.text, textStyle, this.getPieceTranfrom()]}
             >
-              {PieceHelper(this.props.piece)}
+              {pieceHelper(this.props.piece)}
             </Text>
         </TouchableOpacity>
       );
@@ -64,7 +63,7 @@ class Piece extends Component {
             <Text
               style={[styles.text, textStyle, this.getPieceTranfrom()]}
             >
-              {PieceHelper(this.props.piece)}
+              {pieceHelper(this.props.piece)}
             </Text>
         </View>
       );

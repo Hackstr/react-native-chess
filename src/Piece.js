@@ -6,14 +6,18 @@ import {
   Dimensions,
   View,
   Text,
-  Image
+  Image,
+  Animated
 } from 'react-native';
-import PieceHelper from './PieceHelper';
-import { getPosibleMoves, debugBorder } from './Helper';
+import { getPosibleMoves, debugBorder, isEmpty, pieceHelper } from './Helper';
 
 const { width, height } = Dimensions.get('window');
 
 class Piece extends Component {
+
+  constructor() {
+    super();
+  }
 
   getPieceTranfrom() {
     const degree = (this.props.isRotate) ? '180deg' : '0deg';
@@ -30,7 +34,7 @@ class Piece extends Component {
       hasMoves = true;
     }
 
-    this.props.onPieceSelect(this.props.row, this.props.column, this.props.color, hasMoves);
+    this.props.onPieceSelect(this.props.row, this.props.column, this.props.color, this.props.piece, hasMoves);
   }
 
 
@@ -45,11 +49,11 @@ class Piece extends Component {
 
     if (this.props.selectable) {
       return (
-        <TouchableOpacity style={[{ flex: 1 }, styles.container, containerStyle]} onPress={this.onPress.bind(this)}>
+        <TouchableOpacity style={[{ flex: 1 }, styles.container, containerStyle]} onPress={this.onPress.bind(this)} ref="this">
             <Text
               style={[styles.text, textStyle, this.getPieceTranfrom()]}
             >
-              {PieceHelper(this.props.piece)}
+              {pieceHelper(this.props.piece)}
             </Text>
         </TouchableOpacity>
       );
@@ -59,12 +63,28 @@ class Piece extends Component {
             <Text
               style={[styles.text, textStyle, this.getPieceTranfrom()]}
             >
-              {PieceHelper(this.props.piece)}
+              {pieceHelper(this.props.piece)}
             </Text>
         </View>
       );
   }
+
+  // moveAnimation() {
+  //   Animated.timing(          // Uses easing functions
+  //      this.state.fadeAnim,    // The value to drive
+  //      {toValue: 1}            // Configuration
+  //    ).start();
+  // }
+  //
+  // componentDidMount() {
+  //   if(!isEmpty(this.props.lastMove)) {
+  //     console.log(this.props.lastMove);
+  //     this.moveAnimation();
+  //   }
+  // }
 }
+
+
 const styles = {
     container: {
       position: 'absolute',

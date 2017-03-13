@@ -20,6 +20,8 @@ import {
 export default class Example extends Component {
 
   constructor() {
+    // '8/1P6/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    // 'rnbqkbnr/p1pppppp/8/8/2P1P3/1P1P4/p4PPP/RNBQKBNR w KQkq - 0 5'
     super();
     this.game = new Chess();
     this.state = {
@@ -30,7 +32,7 @@ export default class Example extends Component {
   }
 
   turnComplete() {
-    this.setState({ turn: this.game.turn() === 'b' ? Constants.BLACK : Constants.WHITE })
+    this.setState({ turn: this.game.turn() === 'b' ? Constants.BLACK : Constants.WHITE });
   }
 
   moveCallback(row, column, lastMove) {

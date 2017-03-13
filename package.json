@@ -14,6 +14,7 @@
   "author": "Khakim Yessenzhanov",
   "license": "ISC",
   "dependencies": {
+    "react-native-sound": "^0.9.1",
     "react-native-svg": "^5.1.5",
     "victor": "^1.1.0"
   }

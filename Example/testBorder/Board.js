@@ -2,15 +2,18 @@ import React, { Component } from 'react';
 import {
   Dimensions,
   Animated,
-  View
+  View,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import Victor from 'victor';
 import Square from './Square';
 import Piece from './Piece';
 import Arrow from './Arrow';
+import PromotionView from './PromotionView';
 import CONSTANTS from './Constants';
 // import Sound from './Sound';
-import { reverseColor, getPosibleMoves, debugBorder, stringToPos, posToString } from './Helper';
+import { reverseColor, getPosibleMoves, debugBorder, stringToPos, posToString, absolutePos } from './Helper';
 
 import Svg,{
     Line,
@@ -36,6 +39,10 @@ class Board extends Component {
     super();
     this.state = {
       selectedPiece: null,
+      promotion: {
+        drawPromotion: false,
+        cell: null,
+      },
       arrow: {
         from: null,
         to: null,
@@ -48,7 +55,7 @@ class Board extends Component {
   }
 
 
-  onPieceSelected(row, column, color, hasMoves) {
+  onPieceSelected(row, column, color, piece, hasMoves) {
     // this.setArrowValues(stringToPos('d4'), stringToPos('d6'));
     if (this.state.selectedPiece !== null) {
       if (this.props.turn !== color) {
@@ -56,14 +63,14 @@ class Board extends Component {
       } else {
         if (this.state.selectedPiece.row !== row || this.state.selectedPiece.column !== column) {
           //Reselect
-          this.setSelectedPiece({ row, column, hasMoves });
+          this.setSelectedPiece({ row, column, piece, hasMoves });
         } else {
           //Unselect
           this.setSelectedPiece(null);
         }
       }
     } else {
-      this.setSelectedPiece({ row, column, hasMoves });
+      this.setSelectedPiece({ row, column, piece, hasMoves });
     }
   }
 
@@ -94,58 +101,97 @@ class Board extends Component {
   }
 
   drawArrow() {
-    if(this.state.arrow.isVisible) {
+    const { isVisible, from, to } = this.state.arrow;
+
+    if(isVisible) {
       return (
         <Arrow
           width = { width }
-          from = { this.state.arrow.from }
-          to = { this.state.arrow.to }
+          from = { from }
+          to = { to }
         />
       );
     }
   }
 
+  drawPromotion(cell) {
+    if (this.state.promotion.drawPromotion) {
+      let { row, column } = stringToPos(cell);
+      const position = absolutePos(row, column, width);
 
-  makeRandomMove() {
-    const possibleMoves = this.props.game.moves();
-
-    if (possibleMoves.length === 0) return;
-
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    this.props.game.move(possibleMoves[randomIndex]);
-    this.props.turnComplete();
+      return (
+        <PromotionView
+          position = {position}
+          promotionCallback = { this.promotionCallback.bind(this) }
+          isRotate = { this.props.isRotate }
+        />
+      );
+    }
   }
 
-  movePiece(row, column) {
+  setPromotion(cell) {
+    const promotion = { drawPromotion: true, cell };
+    this.setState({promotion});
+  }
 
+  promotionCallback(piece) {
+    const { cell } = this.state.promotion;
+    const { row, column } = stringToPos(cell);
+
+    this.movePiece(row, column, piece);
+  }
+
+  // makeRandomMove() {
+  //   const possibleMoves = this.props.game.moves();
+  //
+  //   if (possibleMoves.length === 0) return;
+  //
+  //   const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+  //   this.props.game.move(possibleMoves[randomIndex]);
+  //   this.props.turnComplete();
+  // }
+
+  movePiece(row, column, promotion = 'default') {
     const { selectedPiece } = this.state;
     const { game, turn, captureCallback, moveCallback, turnComplete } = this.props;
 
-    const move = {
+    const tPromotion = (promotion === 'default') ? 'q': promotion
+
+    const moveObj = {
       from: posToString(selectedPiece.row, selectedPiece.column),
       to: posToString(row, column),
-      promotion: 'q',
+      promotion: tPromotion,
     };
 
-    const gameMove = game.move(move);
+    const move = () => {
+      const gameMove = game.move(moveObj);
 
-    if (gameMove) {
-      // keys[row][column] = keys[selectedPiece.row][selectedPiece.column];
-      // keys[selectedPiece.row][selectedPiece.column] = null;
+      if (gameMove) {
+        this.lastMove = gameMove;
 
-      this.lastMove = gameMove;
-
-      if(gameMove.captured) {
-        const capturedPiece = { type: gameMove.captured, color: reverseColor(turn) };
-        this.lastMove.captured = capturedPiece;
-        captureCallback(capturedPiece);
+        if(gameMove.captured) {
+          const capturedPiece = { type: gameMove.captured, color: reverseColor(turn) };
+          this.lastMove.captured = capturedPiece;
+          captureCallback(capturedPiece);
+        }
       }
+
+      this.setArrowValues(stringToPos(this.lastMove.from), stringToPos(this.lastMove.to));
+
+      moveCallback(row, column, this.lastMove);
+      turnComplete();
+
+      // Test
+      this.setState({promotion: {drawPromotion: false, cell: null}});
     }
 
-    this.setArrowValues(stringToPos(this.lastMove.from), stringToPos(this.lastMove.to));
+    console.log(moveObj, this.state.selectedPiece);
 
-    moveCallback(row, column, this.lastMove);
-    turnComplete();
+    if ((moveObj.to.charAt(1) === '8' || moveObj.to.charAt(1) === '1') && this.state.selectedPiece.piece === 'p' && promotion === 'default') {
+      this.setPromotion(moveObj.to);
+    } else {
+      move();
+    }
   }
 
   getPieceTranfrom() {
@@ -240,6 +286,7 @@ class Board extends Component {
       <Animated.View style={[styles.container, this.getPieceTranfrom()]}>
         {squares.concat(pieces)}
         {this.drawArrow()}
+        {this.drawPromotion(this.state.promotion.cell)}
       </Animated.View>
     );
   }
