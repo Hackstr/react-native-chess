@@ -37,7 +37,9 @@ class Board extends Component {
 
   constructor() {
     super();
-    this.state = {
+
+    this.lastMove = {};
+    this.defaultState = {
       selectedPiece: null,
       promotion: {
         drawPromotion: false,
@@ -51,7 +53,11 @@ class Board extends Component {
       },
     };
 
-    this.lastMove = {};
+    this.state = this.defaultState;
+  }
+
+  resetState() {
+    this.setState(this.defaultState);
   }
 
 
@@ -179,13 +185,11 @@ class Board extends Component {
       this.setArrowValues(stringToPos(this.lastMove.from), stringToPos(this.lastMove.to));
 
       moveCallback(row, column, this.lastMove);
-      turnComplete();
+      turnComplete(this.lastMove);
 
       // Test
       this.setState({promotion: {drawPromotion: false, cell: null}});
     }
-
-    console.log(moveObj, this.state.selectedPiece);
 
     if ((moveObj.to.charAt(1) === '8' || moveObj.to.charAt(1) === '1') && this.state.selectedPiece.piece === 'p' && promotion === 'default') {
       this.setPromotion(moveObj.to);
